@@ -4,6 +4,7 @@
 
 match_codes=200 # Default match code
 threads=3 # Default number of threads
+recursion_depth=0 # Default to no recursion
 
 while getopts ":l:w:o:mc:t:" opt; do
   case $opt in
