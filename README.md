@@ -12,7 +12,7 @@ Massffuf is a tool that uses interlace and ffuf to fuzz multiple domains at once
 
 ## Useage:
 
-`./massffuf.sh -l domains.txt -w wordlist.txt [-o output_directory] [-mc status_code(s) (default 200)] [-t threads (default 3)]`
+`./massffuf.sh -l domains.txt -w wordlist.txt [-o output_dir] [-mc status_code(s)] [-t threads] [-r depth]`
 
 ## Options:
 
