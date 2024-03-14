@@ -24,7 +24,7 @@ while getopts ":l:w:o:mc:t:" opt; do
       threads="$OPTARG"
       ;;
     f)
-      recursion_depth=$OPTARG"
+      recursion_depth="$OPTARG"
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
