@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o output_directory] [-mc status_code(s)] [-t threads]
+# Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o output_directory] [-mc status_code(s)] [-t threads] [-r depth (int)]
 
 match_codes=200 # Default match code
 threads=3 # Default number of threads
@@ -22,6 +22,9 @@ while getopts ":l:w:o:mc:t:" opt; do
     t)
       threads="$OPTARG"
       ;;
+    f)
+      recursion_depth=$OPTARG"
+      ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
       exit 1
@@ -35,7 +38,7 @@ done
 
 # Ensure required parameters are provided
 if [ -z "$domains_file" ] || [ -z "$wordlist" ]; then
-  echo "Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o output_directory] [-mc status_code(s) (default 200)] [-t threads (default 3)]" >&2
+  echo "Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o output_directory] [-mc status_code(s) (default 200)] [-t threads (default 3)] [-r depth (int)]" >&2
   exit 1
 fi
 
@@ -60,7 +63,11 @@ mkdir -p "$output_directory"
 echo "Output directory : $output_directory."
 
 # Run interlace and ffuf
-interlace -tL "$domains_file" -threads "$threads" --silent -c "bash -c 'TARGET=\$(echo _target_ | sed \"s|/|_|g\"); ffuf -w $wordlist -u _target_/FUZZ -ac -mc $match_codes -o ${output_directory}/\${TARGET}_results.json -of json'"
+if [ "$recursion_depth" -gt 0 ]; then
+  interlace -tL "$domains_file" -threads "$threads" --silent -c "bash -c 'TARGET=\$(echo _target_ | sed \"s|/|_|g\"); ffuf -w $wordlist -u _target_/FUZZ -ac -mc $match_codes -recursion -recursion-depth $recursion_depth -o ${output_directory}/\${TARGET}_results.json -of json'"
+else
+  interlace -tL "$domains_file" -threads "$threads" --silent -c "bash -c 'TARGET=\$(echo _target_ | sed \"s|/|_|g\"); ffuf -w $wordlist -u _target_/FUZZ -ac -mc $match_codes -o ${output_directory}/\${TARGET}_results.json -of json'"
+fi
 
 # Combine results into a single file
 find "$output_directory" -type f -name "*.json" -exec cat {} + > "$output_directory/all_results.json"
