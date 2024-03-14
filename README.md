@@ -8,11 +8,15 @@
 by @swehtpantz
 ```
 
-Massffuf is a tool that uses interlace and ffuf to fuzz multiple domains at once with a given wordlist.
+Massffuf is a tool that uses interlace and ffuf to fuzz multiple domains at once with a given wordlist. Produces fuzzing data similar to that of reconftw, minus most of the false positives.
 
 Inspired by:
-@tomnomnom's meg (https://github.com/tomnomnom/meg)
+
+meg (https://github.com/tomnomnom/meg)
+
 ffuf (https://github.com/ffuf/ffuf)
+
+reconftw (https://github.com/six2dez/reconftw)
 
 ## Requirements:
 ffuf : `https://github.com/ffuf/ffuf`
