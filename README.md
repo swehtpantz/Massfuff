@@ -8,7 +8,7 @@
 by @swehtpantz
 ```
 
-Massffuf is a tool that uses interlace and ffuf to fuzz multiple domains at once with a given wordlist. Produces fuzzing data similar to that of reconftw, minus most of the false positives.
+Massffuf is a tool that uses interlace and ffuf to fuzz multiple domains at once with a given wordlist. Produces fuzzing data similar to that of reconftw, minus many false positives.
 
 Inspired by:
 
@@ -18,6 +18,14 @@ ffuf (https://github.com/ffuf/ffuf)
 
 reconftw (https://github.com/six2dez/reconftw)
 
+## Important:
+
+Use with a VPS and run with caution (set your rate-limit accordingly)! 
+
+Running this tool too quickly will likely generate warnings from target cloud providers and may result in actions taken against your IP.
+
+*You have been warned!*
+
 ## Requirements:
 ffuf : `https://github.com/ffuf/ffuf`
 
@@ -25,21 +33,21 @@ interlace : `https://github.com/codingo/Interlace`
 
 ## Useage:
 
-`./massffuf.sh -l domains.txt -w wordlist.txt [-o output_dir] [-mc status_code(s)] [-t threads] [-recursion depth] [-rl rate_limit]`
+`./massffuf.sh -l domains.txt -w wordlist.txt [-o | --output-directory] [-m | --match-codes] [-t | --threads] [-r | --recursion <depth>] [--R | --rate-limit]`
 
 ## Options:
 
 ```
 Required:
--l         List of domains/URLs to fuzz
--w         Wordlist to use
+-l  | --domains-file      List of domains/URLs to fuzz
+-w  | --wordlist          Wordlist to use
 
 Optional:
--o         Directory to save to. Default: $pwd/massffuf
--mc        Codes to match. Default: 200
--t         Number of threads to run. Default: 3
--recursion Level of recursion. Default 0.
--rl        Rate limit. Default 40.
+-o  | --output-directory  Directory to save to. Default: $pwd/massffuf
+-mc | --match-codes       Codes to match. Default: 200
+-t  | --threads           Number of threads to run. Default: 3
+-r  | --recursion-depth   Level of recursion. Default 0.
+-R  | --rate-limit        Rate limit. Default 40.
 ```
 
 ### Upcoming changes:
