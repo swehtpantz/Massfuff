@@ -1,49 +1,47 @@
 #!/bin/bash
 
-# Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o output_directory] [-mc status_code] [-t threads] [-recursion depth] [-rl rate-limit]
+# Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o | --output-directory] [-m | --match-codes] [-t | --threads] [-r | --recursion <depth>] [--R | --rate-limit]
 
-match_codes=200 # Default match code
-threads=3 # Default number of threads
-recursion_depth=0 # Default to no recursion
-rate_limit=40 # Default rate limit
+TEMP=$(getopt -o l:w:o:m:t:r:R: --long domains-file:,wordlist:,output-directory:,match-codes:,threads:,recursion-depth:,rate-limit: -- "$@")
 
-while getopts ":l:w:o:mc:t:" opt; do
-  case $opt in
-    l)
-      domains_file="$OPTARG"
-      ;;
-    w)
-      wordlist="$OPTARG"
-      ;;
-    o)
-      output_directory="$OPTARG"
-      ;;
-    mc)
-      match_codes="$OPTARG"
-      ;;
-    t)
-      threads="$OPTARG"
-      ;;
-    recursion)
-      recursion_depth="$OPTARG"
-      ;;
-    rl)
-      rate_limit="$OPTARG"
-      ;;
-    \?)
-      echo "Invalid option: -$OPTARG" >&2
-      exit 1
-      ;;
-    :)
-      echo "Option -$OPTARG requires an argument." >&2
-      exit 1
-      ;;
-  esac
+if [ $? != 0 ]; then echo "Terminating..." >&2; exit 1; fi
+
+# Note the quotes around `$TEMP`: they are essential!
+eval set -- "$TEMP"
+
+# Default values
+match_codes=200
+threads=3
+recursion_depth=0
+rate_limit=40
+
+while true; do
+    case "$1" in
+        -l|--domains-file)
+            domains_file="$2"; shift 2;;
+        -w|--wordlist)
+            wordlist="$2"; shift 2;;
+        -o|--output-directory)
+            output_directory="$2"; shift 2;;
+        -m|--match-codes)
+            match_codes="$2"; shift 2;;
+        -t|--threads)
+            threads="$2"; shift 2;;
+        -r|--recursion-depth)
+            recursion_depth="$2"; shift 2;;
+        -R|--rate-limit)
+            rate_limit="$2"; shift 2;;
+        --)
+            shift; break;;
+        *)
+            echo "Programming error"
+            exit 3;;
+    esac
 done
 
 # Ensure required parameters are provided
 if [ -z "$domains_file" ] || [ -z "$wordlist" ]; then
-  echo "Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o output_directory] [-mc status_code] [-t threads] [-recursion depth] [-rl rate-limit]" >&2
+  echo "Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o | --output-directory] [-m | --match-codes] [-t | --threads] [-r | --recursion <depth>] [--R | --rate-limit]" >&2
   exit 1
 fi
 
@@ -69,9 +67,9 @@ echo "Output directory : $output_directory."
 
 # Run interlace and ffuf
 if [ "$recursion_depth" -gt 0 ]; then
-  interlace -tL "$domains_file" -threads "$threads" --silent -c "bash -c 'TARGET=\$(echo _target_ | sed \"s|/|_|g\"); ffuf -w $wordlist -u _target_/FUZZ -ac -mc $match_codes -rl $rate_limit -recursion -recursion-depth $recursion_depth -o ${output_directory}/\${TARGET}_results.json -of json'"
+  interlace -tL "$domains_file" -threads "$threads" --silent -c "bash -c 'TARGET=\$(echo _target_ | sed \"s|/|_|g\"); ffuf -w $wordlist -u _target_/FUZZ -ac -mc $match_codes -rate $rate_limit -recursion -recursion-depth $recursion_depth -o ${output_directory}/\${TARGET}_results.json -of json'"
 else
-  interlace -tL "$domains_file" -threads "$threads" --silent -c "bash -c 'TARGET=\$(echo _target_ | sed \"s|/|_|g\"); ffuf -w $wordlist -u _target_/FUZZ -ac -mc $match_codes -rl $rate_limit -o ${output_directory}/\${TARGET}_results.json -of json'"
+  interlace -tL "$domains_file" -threads "$threads" --silent -c "bash -c 'TARGET=\$(echo _target_ | sed \"s|/|_|g\"); ffuf -w $wordlist -u _target_/FUZZ -ac -mc $match_codes -rate $rate_limit -o ${output_directory}/\${TARGET}_results.json -of json'"
 fi
 
 # Combine results into a single file
