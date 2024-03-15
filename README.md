@@ -31,6 +31,8 @@ ffuf : `https://github.com/ffuf/ffuf`
 
 interlace : `https://github.com/codingo/Interlace`
 
+jq : `sudo apt update && sudo apt install jq -y`
+
 ## Useage:
 
 `./massffuf.sh -l domains.txt -w wordlist.txt [-o | --output-directory] [-m | --match-codes] [-t | --threads] [-r | --recursion <depth>] [--R | --rate-limit]`
