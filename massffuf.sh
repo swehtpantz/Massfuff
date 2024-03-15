@@ -13,7 +13,7 @@ eval set -- "$TEMP"
 match_codes=200
 threads=3
 recursion_depth=0
-rate_limit=40
+rate_limit=0
 
 while true; do
     case "$1" in
