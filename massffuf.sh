@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o output_directory] [-mc status_code(s)] [-t threads] [-r depth (int)]
+# Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o output_directory] [-mc status_code] [-t threads] [-recursion depth] [-rl rate-limit]
 
 match_codes=200 # Default match code
 threads=3 # Default number of threads
 recursion_depth=0 # Default to no recursion
+rate_limit=40 # Default rate limit
 
 while getopts ":l:w:o:mc:t:" opt; do
   case $opt in
@@ -23,8 +24,11 @@ while getopts ":l:w:o:mc:t:" opt; do
     t)
       threads="$OPTARG"
       ;;
-    f)
+    recursion)
       recursion_depth="$OPTARG"
+      ;;
+    rl)
+      rate_limit="$OPTARG"
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -39,7 +43,7 @@ done
 
 # Ensure required parameters are provided
 if [ -z "$domains_file" ] || [ -z "$wordlist" ]; then
-  echo "Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o output_directory] [-mc status_code(s) (default 200)] [-t threads (default 3)] [-r depth (int)]" >&2
+  echo "Usage: ./massffuf.sh -l domains.txt -w wordlist.txt [-o output_directory] [-mc status_code] [-t threads] [-recursion depth] [-rl rate-limit]" >&2
   exit 1
 fi
 
@@ -65,9 +69,9 @@ echo "Output directory : $output_directory."
 
 # Run interlace and ffuf
 if [ "$recursion_depth" -gt 0 ]; then
-  interlace -tL "$domains_file" -threads "$threads" --silent -c "bash -c 'TARGET=\$(echo _target_ | sed \"s|/|_|g\"); ffuf -w $wordlist -u _target_/FUZZ -ac -mc $match_codes -recursion -recursion-depth $recursion_depth -o ${output_directory}/\${TARGET}_results.json -of json'"
+  interlace -tL "$domains_file" -threads "$threads" --silent -c "bash -c 'TARGET=\$(echo _target_ | sed \"s|/|_|g\"); ffuf -w $wordlist -u _target_/FUZZ -ac -mc $match_codes -rl $rate_limit -recursion -recursion-depth $recursion_depth -o ${output_directory}/\${TARGET}_results.json -of json'"
 else
-  interlace -tL "$domains_file" -threads "$threads" --silent -c "bash -c 'TARGET=\$(echo _target_ | sed \"s|/|_|g\"); ffuf -w $wordlist -u _target_/FUZZ -ac -mc $match_codes -o ${output_directory}/\${TARGET}_results.json -of json'"
+  interlace -tL "$domains_file" -threads "$threads" --silent -c "bash -c 'TARGET=\$(echo _target_ | sed \"s|/|_|g\"); ffuf -w $wordlist -u _target_/FUZZ -ac -mc $match_codes -rl $rate_limit -o ${output_directory}/\${TARGET}_results.json -of json'"
 fi
 
 # Combine results into a single file
