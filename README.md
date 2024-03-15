@@ -25,7 +25,7 @@ interlace : `https://github.com/codingo/Interlace`
 
 ## Useage:
 
-`./massffuf.sh -l domains.txt -w wordlist.txt [-o output_dir] [-mc status_code(s)] [-t threads] [-r depth]`
+`./massffuf.sh -l domains.txt -w wordlist.txt [-o output_dir] [-mc status_code(s)] [-t threads] [-recursion depth] [-rl rate_limit]`
 
 ## Options:
 
@@ -38,7 +38,8 @@ Optional:
 -o         Directory to save to. Default: $pwd/massffuf
 -mc        Codes to match. Default: 200
 -t         Number of threads to run. Default: 3
--r <int>   Level of recursion. Default 0.      
+-recursion Level of recursion. Default 0.
+-rl        Rate limit. Default 40.
 ```
 
 ### Upcoming changes:
