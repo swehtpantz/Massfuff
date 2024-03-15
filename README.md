@@ -46,7 +46,7 @@ Required:
 
 Optional:
 -o  | --output-directory  Directory to save to. Default: $pwd/massffuf
--mc | --match-codes       Codes to match. Default: 200
+-m | --match-codes       Codes to match. Default: 200
 -t  | --threads           Number of threads to run. Default: 3
 -r  | --recursion-depth   Level of recursion. Default 0.
 -R  | --rate-limit        Rate limit. Default 0.
