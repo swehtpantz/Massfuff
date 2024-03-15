@@ -49,7 +49,7 @@ Optional:
 -mc | --match-codes       Codes to match. Default: 200
 -t  | --threads           Number of threads to run. Default: 3
 -r  | --recursion-depth   Level of recursion. Default 0.
--R  | --rate-limit        Rate limit. Default 40.
+-R  | --rate-limit        Rate limit. Default 0.
 ```
 
 ### Upcoming changes:
